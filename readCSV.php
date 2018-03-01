@@ -23,11 +23,11 @@ $content = array();		//body, i.e remaining rows
 function readHeader($file) {
 	global $header, $delimiter;
 	
-	$line = fgets($file);
-	$header = explode($delimiter, $line);
+	$header = fgetcsv($file,0,$delimiter);
 	foreach($header as $head) {
-		echo $head."<br>";
+		echo $head;
 	}
+	echo "<br>";
 	
 	echo "READ HEADER LENGTH ".count($header)."<br>";
 }
@@ -36,15 +36,15 @@ function readHeader($file) {
 function readLines($file) {
 	global $content, $delimiter;
 	while(!feof($file)) {	//checking EOF
-		$row = fgets($file);
-		$tmpArray = explode($delimiter, $row);
+		$row = fgetcsv($file,0,$delimiter);
+		$content[] = $row;
 		
-	foreach($tmpArray as $element) {
-		echo $element."<br>";
-	}
+		foreach($row as $element) {
+			echo $element;
+		}
+		echo "<br>";
 		
-		echo "READ ROW LENGTH ".count($tmpArray)."<br>";
-		$content[] = $tmpArray;
+		echo "READ ROW LENGTH ".count($row)."<br>";
 	}
 }
 
@@ -52,15 +52,15 @@ function readLines($file) {
 Writes all lines from array data to FILE
 */
 function writeLines($data) {
-	global $fileToWrite;
-	$file = fopen($fileToWrite, "w");		//making file. Will rewrite existing
+	global $fileToWrite, $delimiter;
 	
-	foreach($data as $item)
-		fwrite($file, $item);
-	
+	$file = fopen($fileToWrite, 'w');				//making file. Will rewrite existing
+	foreach($data as $row)
+		fputcsv($file, $row, $delimiter);		//writing CSV
+
 }
 
 readHeader($file);
 readLines($file);
-writeLines($header);
+writeLines($content);
 ?>
