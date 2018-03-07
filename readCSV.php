@@ -18,6 +18,8 @@ $fileToWrite = fopen($fileToWrite, 'w');	//create file to write
 $header = array();		//header
 $content = array();		//body, i.e remaining rows
 
+echo "IMPORTANT! The things printed out here are unformated, and wont show up in written file<br>";
+
 //fgets returns 1 line and keeps track internally. So next fgets after this one will return the next line!
 function readHeader($file) {
 	global $header, $delimiter;
