@@ -6,7 +6,7 @@ Simple CSV formatting program. Use excel to insert/replace the correct column na
 */
 
 ///SETTINGS. CHANGE THESE MANUALLY
-$file = 'låntagare.csv';  //file name to read. put it in current folder
+$file = 'konstverk_test.csv';  //file name to read. put it in current folder
 $delimiter = ';';			//delimiter to read in
 $delimiterToWrite = ',';	//delimiter to use when writing
 $fileToWrite = 'output.csv';	//output. will be overwritten if exists
@@ -64,7 +64,7 @@ function readLines($file) {
 		$row = fgetcsv($file,0,$delimiter);
 		$content[] = $row;
 		
-		foreach($row as $element) {
+		foreach($row as $element) {		//can get error here if empty... ignore
 			echo $element." ";
 		}
 		echo "<br>";
@@ -97,7 +97,7 @@ function writeLines($data) {
 	global $fileToWrite, $delimiterToWrite;
 
 	foreach($data as $row)
-		fputcsv($fileToWrite, $row, $delimiterToWrite, ENCLOSURE);		//writing CSV
+		fputcsv($fileToWrite, $row, $delimiterToWrite, ENCLOSURE);		//writing CSV. might get error if empty ignore.
 
 }
 
