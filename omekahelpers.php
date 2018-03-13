@@ -1,27 +1,29 @@
     /Helper functions for Importing from Excel -> CSV
 	//Copy to plugins/ImportExport/mods/csvimport/import.php
 	
-	/**
-     * Addin in custom relations based on string value in certain fields
+    /**
+     * Addin in custom relations based on string value in certain fields.
+     * Used in importing from client that has a personal relation linked ony by name (previously Ronneby kommun)
      * You will need to customize the code yourself for the fields in question
      * This code is not optimized and you should set the correct columns manually in excel/CSV
      * Usage: Called from _addItemFromRow, before the item is recorded to _recordImportedItemId
+     * Dont forget to comment that line after importing!!!
      * @param Item
      */
     private function _checkCustomRelation($item) 
     {
         
-        if (!empty(metadata($item, array('Item Type Metadata', 'Låntagare')))) {
+        if (!empty(implode('',$item->getElementTexts('Item Type Metadata', 'Låntagare')))) {
             $select = $this->_db->select()->from($this->_db->individuals)->where('efternamn = ?', 
-                    metadata($item, array('Item Type Metadata', 'Låntagare')))->limit(1);
+                    implode('',$item->getElementTexts('Item Type Metadata', 'Låntagare')))->limit(1);
             $individual = $this->_db->getTable('individuals')->fetchRow($select);
             if($individual)
                 $this->_addCustomRelation($item, 'Låntagare',$individual['id']);
         }
-            
-        if (!empty(metadata($item, array('Item Type Metadata', 'Konstnär / gravör - efternamn')))) {
+        
+        if (!empty(implode('',$item->getElementTexts('Item Type Metadata', 'Konstnär / gravör - efternamn')))) {
             $select = $this->_db->select()->from($this->_db->individuals)->where('efternamn = ?', 
-                    metadata($item, array('Item Type Metadata', 'Konstnär / gravör - efternamn')))->limit(1);
+                    implode('',$item->getElementTexts('Item Type Metadata', 'Konstnär / gravör - efternamn')))->limit(1);
             $individual = $this->_db->getTable('individuals')->fetchRow($select);
             if($individual)
                 $this->_addCustomRelation($item, 'Konstnär', $individual['id']);
@@ -59,3 +61,4 @@
         
         $re->save();
     }
+    
