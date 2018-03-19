@@ -60,8 +60,7 @@ function makeVocabData() {
 //reads each row, except header and returns them as separat array, exploding with delimiter
 function readLines($file) {
 	global $content, $delimiter;
-	while(!feof($file)) {	//checking EOF
-		$row = fgetcsv($file,0,$delimiter);
+	while($row = fgetcsv($file,0,$delimiter)) {
 		$content[] = $row;
 		
 		foreach($row as $element) {		//can get error here if empty... ignore
