@@ -41,7 +41,8 @@ Column
 Word1
 Word2
 ...
-echoes string of words, separated by \n, enclosed in "data..."
+echoes string of words, separated by \n, enclosed in quotes. You will need to add in appropriate header (vocab:namn,vocab:beskrivning,vocab:data,vocab:links)
+as well as namn and possibly links and beskrivning
 */
 function makeVocabData() {
 	global $file;
