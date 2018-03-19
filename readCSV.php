@@ -11,6 +11,9 @@ $delimiter = ';';			//delimiter to read in
 $delimiterToWrite = ',';	//delimiter to use when writing
 $fileToWrite = 'output.csv';	//output. will be overwritten if exists
 define('ENCLOSURE','"');		//if quotes should enclose each element. If they are missing a word like: Blå, vas cant be imported. Leave as empty string if you dont need.
+define('PRINT_ARRAY',false);	//debug
+define('PRINT_ROWS', false);	//debug
+define('OUTPUT_ROW', false);		//debug
 
 ///LOGICS
 $file = fopen($file, "r");  //open file
@@ -60,17 +63,28 @@ function makeVocabData() {
 
 //reads each row, except header and returns them as separat array, exploding with delimiter
 function readLines($file) {
-	global $content, $delimiter;
+	global $content, $delimiter, $header;
 	while($row = fgetcsv($file,0,$delimiter)) {
 		$content[] = $row;
 		
-		foreach($row as $element) {		//can get error here if empty... ignore
-			echo $element." ";
+		if(PRINT_ROWS) {
+			foreach($row as $element) {		//can get error here if empty... ignore
+				echo $element." ";
+			}
+			echo "<br>";
 		}
-		echo "<br>";
 		
 		echo "READ ROW LENGTH ".count($row)."<br>";
+		if (count($header) !== count($row)) {
+			echo "THE ROW COUNT DOES NOT MATCH HEADER! BREAKING!<br>";
+			break;
+		}
 	}
+	
+	echo "TOTAL NUM ROWS ".count($content)."<br>";
+	
+	if(PRINT_ARRAY)
+		echo var_export($content,true);
 }
 
 /*
@@ -95,9 +109,20 @@ Writes all lines (except header that should be called first) from array data to 
 */
 function writeLines($data) {
 	global $fileToWrite, $delimiterToWrite;
-
-	foreach($data as $row)
-		fputcsv($fileToWrite, $row, $delimiterToWrite, ENCLOSURE);		//writing CSV. might get error if empty ignore.
+	$counter = 1;
+	foreach($data as $row) {
+		if (OUTPUT_ROW)
+			echo "Writing: ".implode($delimiterToWrite,$row)."<br>";
+		$result = fputcsv($fileToWrite, $row, $delimiterToWrite, ENCLOSURE);		//writing CSV. might get error if empty ignore.
+		
+		if(!$result) {
+			echo "CRITICAL ERROR! CAN'T WRITE ROW NUM (row count starts with 1, after header): ".$counter;
+			break;
+		}
+		$counter++;
+	}
+	
+	echo "WROTE A TOTAL OF (excluding header). An empty line will be written at end: ". $counter;
 
 }
 
